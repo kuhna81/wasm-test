@@ -4,7 +4,7 @@
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>WASM vs JS: Prime Number Benchmark</title>
-		./style.css
+		<link rel="stylesheet" href="style.css" />
 	</head>
 	<body>
 		<main class="container">
@@ -58,7 +58,7 @@
 
 			// Create workers once
 			const javascriptWorker = new Worker('./workers/jsWorker.js',   { type: 'module' });
-			const wasmWorker       = new Worker('./workers/wasmWorker.js', { type: 'module' });
+			const cppWorker       = new Worker('./workers/cppWorker.js', { type: 'module' });
 
 			// Utility to reset UI fields
 			function resetResultPanels() {
@@ -89,7 +89,7 @@
 				wasmStatusLabel.textContent       = 'Initializing...';
 
 				javascriptWorker.postMessage({ limit: limitValue });
-				wasmWorker.postMessage({ limit: limitValue });
+				cppWorker.postMessage({ limit: limitValue });
 			});
 
 			// JavaScript worker result handler
@@ -102,8 +102,8 @@
 				javascriptPrimeOutput.textContent      = primeNumbers.join(', ');
 			};
 
-			// WASM worker result handler
-			wasmWorker.onmessage = (messageEvent) => {
+			// CPP worker result handler
+			cppWorker.onmessage = (messageEvent) => {
 				const { engineName, elapsedTimeMs, primeNumbers } = messageEvent.data;
 
 				wasmStatusLabel.textContent      = `Done (${engineName})`;

@@ -1,4 +1,4 @@
-// workers/wasmWorker.js
+// workers/cppWorker.js
 // Module worker to import the ES module emitted by Emscripten.
 
 let wasmModuleFactory = null;
@@ -12,8 +12,8 @@ async function initializeWasmModule() {
   if (wasmModuleInstance) return wasmModuleInstance;
 
   // Path is relative to THIS worker file when imported.
-  const modulePath = '../cpp-primes/primes.js';
-  const wasmPathPrefix = '../cpp-primes/';
+  const modulePath = '../cpp/lib.js';
+  const wasmPathPrefix = '../cpp/';
 
   if (!wasmModuleFactory) {
     wasmModuleFactory = (await import(modulePath)).default;
