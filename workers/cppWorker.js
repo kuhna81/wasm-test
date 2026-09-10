@@ -1,45 +1,33 @@
-// workers/cppWorker.js
-// Module worker to import the ES module emitted by Emscripten.
+let factory, moduleInstance;
 
-let wasmModuleFactory = null;
-let wasmModuleInstance = null;
-
-/**
- * Initialize the Emscripten module once.
- * We use locateFile so the module can find primes.wasm next to primes.js.
- */
-async function initializeWasmModule() {
-  if (wasmModuleInstance) return wasmModuleInstance;
-
-  // Path is relative to THIS worker file when imported.
-  const modulePath = '../cpp/lib.js';
-  const wasmPathPrefix = '../cpp/';
-
-  if (!wasmModuleFactory) {
-    wasmModuleFactory = (await import(modulePath)).default;
-  }
-
-  wasmModuleInstance = await wasmModuleFactory({
-    locateFile: (filename) => wasmPathPrefix + filename
+async function init() {
+  if (moduleInstance) return moduleInstance;
+  factory = (await import('../cpp/lib.js')).default;
+  moduleInstance = await factory({
+    locateFile: (filename) => '../cpp/' + filename
   });
-
-  return wasmModuleInstance;
+  return moduleInstance;
 }
 
-self.onmessage = async (messageEvent) => {
-  const { limit } = messageEvent.data;
+self.onmessage = async ({ data }) => {
+	/*
+	const mod = await init();
+	const r = mod.sieve_primes(20);
+	console.log('repr:', r.toString?.(), r);
+	console.log('has size():', typeof r.size === 'function');
+	console.log('size():', typeof r.size === 'function' ? r.size() : 'no size');
+	console.log('first few:', typeof r.get === 'function' ? [r.get(0), r.get(1), r.get(2)] : 'no get');
+	*/
+  const { limit } = data;
+  const t0 = performance.now();
+  const mod = await init();
 
-  const startTimestampMs = performance.now();
-  const moduleInstance = await initializeWasmModule();
+  const primeNumbers = mod.sieve_primes_js(limit);
 
-  // Call the C++ function bound via Embind; it returns a JS Array (VectorUint32 converted).
-  const primeNumbers = moduleInstance.sieve_primes(limit);
-
-  const endTimestampMs = performance.now();
-
+  const t1 = performance.now();
   self.postMessage({
     engineName: 'WASM (C++ via Emscripten)',
-    elapsedTimeMs: endTimestampMs - startTimestampMs,
+    elapsedTimeMs: t1 - t0,
     primeNumbers
   });
 };
