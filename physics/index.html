@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang='en'>
+	<head>
+		<meta charset='utf-8' />
+		<meta name='viewport' content='width=device-width, initial-scale=1' />
+		<title>JS vs WASM - Particles</title>
+		<link rel='stylesheet' href='style.css' />
+		<script src='main.js' defer></script>
+	</head>
+	<body>
+		
+		<header class='controls'>
+			<form id='controlForm'>
+				<div class='field'>
+					<label for='particleCount'>Particles</label>
+					<input type='range' id='particleCount' name='particleCount' min='1000' max='100000' step='1000' value='10000' />
+					<output id='particleCountOut'>10,000</output>
+				</div>
+				<div class='field'>
+					<label for='speedScale'>Speed</label>
+					<input type='range' id='speedScale' name='speedScale' min='0.2' max='5' step='0.2' value='1.0' />
+					<output id='speedScaleOut'>1.0x</output>
+				</div>
+				<div class='field'>
+					<button type='button' id='resetBtn'>Reset</button>
+				</div>
+			</form>
+		</header>
+
+		<main class='split'>
+			<section class='panel'>
+				<h2>JavaScript</h2>
+				<canvas id='jsCanvas' width='640' height='400'></canvas>
+				<div class='metrics' id='jsMetrics'>
+				</div>
+			</section>
+			<section class='panel'>
+				<h2>WASM (C++)</h2>
+				<canvas id='wasmCanvas' width='640' height='400'></canvas>
+				<div class='metrics' id='wasmMetrics'>
+				</div>
+			</section>
+		</main>
+
+	</body>
+</html>
