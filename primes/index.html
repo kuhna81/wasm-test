@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>WASM vs JS: Prime Number Benchmark</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<main class="container">
+			<h1>WASM vs JS: Prime Number Benchmark</h1>
+
+			<form id="primeInputForm">
+				<label for="upperLimitInput">Generate primes up to:</label>
+				<input id="upperLimitInput" name="upperLimitInput" type="number" min="0" step="1" placeholder="2000000" required />
+				<button type="submit">Run</button>
+			</form>
+
+			<div class="results">
+				<section class="panel" id="javascriptResultPanel">
+					<h2>JavaScript Result</h2>
+					<div class="meta">
+						<div><strong>Status:</strong> <span id="javascriptStatusLabel">Idle</span></div>
+						<div><strong>Time:</strong> <span id="javascriptElapsedTimeLabel">–</span></div>
+						<div><strong>Count:</strong> <span id="javascriptPrimeCountLabel">–</span></div>
+					</div>
+					<pre id="javascriptPrimeOutput" class="output"></pre>
+				</section>
+
+				<section class="panel" id="wasmResultPanel">
+					<h2>WASM (C++) Result</h2>
+					<div class="meta">
+						<div><strong>Status:</strong> <span id="wasmStatusLabel">Idle</span></div>
+						<div><strong>Time:</strong> <span id="wasmElapsedTimeLabel">–</span></div>
+						<div><strong>Count:</strong> <span id="wasmPrimeCountLabel">–</span></div>
+					</div>
+					<pre id="wasmPrimeOutput" class="output"></pre>
+				</section>
+			</div>
+		</main>
+
+		<script type="module">
+			// Form elements
+			const primeInputForm = document.getElementById('primeInputForm');
+			const upperLimitInput = document.getElementById('upperLimitInput');
+
+			// JavaScript panel elements
+			const javascriptStatusLabel      = document.getElementById('javascriptStatusLabel');
+			const javascriptElapsedTimeLabel = document.getElementById('javascriptElapsedTimeLabel');
+			const javascriptPrimeCountLabel  = document.getElementById('javascriptPrimeCountLabel');
+			const javascriptPrimeOutput      = document.getElementById('javascriptPrimeOutput');
+
+			// WASM panel elements
+			const wasmStatusLabel      = document.getElementById('wasmStatusLabel');
+			const wasmElapsedTimeLabel = document.getElementById('wasmElapsedTimeLabel');
+			const wasmPrimeCountLabel  = document.getElementById('wasmPrimeCountLabel');
+			const wasmPrimeOutput      = document.getElementById('wasmPrimeOutput');
+
+			// Create workers once
+			const javascriptWorker = new Worker('./workers/jsWorker.js',   { type: 'module' });
+			const wasmWorker       = new Worker('./workers/wasmWorker.js', { type: 'module' });
+
+			// Utility to reset UI fields
+			function resetResultPanels() {
+				javascriptStatusLabel.textContent      = 'Idle';
+				javascriptElapsedTimeLabel.textContent = '–';
+				javascriptPrimeCountLabel.textContent  = '–';
+				javascriptPrimeOutput.textContent      = '';
+
+				wasmStatusLabel.textContent      = 'Idle';
+				wasmElapsedTimeLabel.textContent = '–';
+				wasmPrimeCountLabel.textContent  = '–';
+				wasmPrimeOutput.textContent      = '';
+			}
+
+			primeInputForm.addEventListener('submit', (submitEvent) => {
+				submitEvent.preventDefault();
+
+				const limitValue = parseInt(upperLimitInput.value, 10);
+				if (Number.isNaN(limitValue) || limitValue < 0) {
+					alert('Please enter a non-negative integer.');
+					return;
+				}
+
+				resetResultPanels();
+
+				// Fire both computations in parallel; they update independently.
+				javascriptStatusLabel.textContent = 'Running...';
+				wasmStatusLabel.textContent       = 'Initializing...';
+
+				javascriptWorker.postMessage({ limit: limitValue });
+				wasmWorker.postMessage({ limit: limitValue });
+			});
+
+			// JavaScript worker result handler
+			javascriptWorker.onmessage = (messageEvent) => {
+				const { engineName, elapsedTimeMs, primeNumbers } = messageEvent.data;
+
+				javascriptStatusLabel.textContent      = `Done (${engineName})`;
+				javascriptElapsedTimeLabel.textContent = `${elapsedTimeMs.toFixed(2)} ms`;
+				javascriptPrimeCountLabel.textContent  = primeNumbers.length.toLocaleString();
+				javascriptPrimeOutput.textContent      = primeNumbers.join(', ');
+			};
+
+			// CPP worker result handler
+			wasmWorker.onmessage = (messageEvent) => {
+				const { engineName, elapsedTimeMs, primeNumbers } = messageEvent.data;
+
+				wasmStatusLabel.textContent      = `Done (${engineName})`;
+				wasmElapsedTimeLabel.textContent = `${elapsedTimeMs.toFixed(2)} ms`;
+				wasmPrimeCountLabel.textContent  = primeNumbers.length.toLocaleString();
+				wasmPrimeOutput.textContent      = primeNumbers.join(', ');
+			};
+		</script>
+	</body>
+</html>
