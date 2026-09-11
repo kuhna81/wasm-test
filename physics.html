@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>JS vs WebAssembly Particle Benchmark</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel='stylesheet' href='styles/physics.css' />
+  <script src='scripts/physics.js'></script>
+</head>
+<body>
+  <!-- Top Controls -->
+  <header class="controls">
+    <form id="controlForm">
+      <div class="field">
+        <label for="particleCount">Particles</label>
+        <input type="range" id="particleCount" name="particleCount" min="1000" max="100000" step="1000" value="10000" />
+        <output id="particleCountOut">10,000</output>
+      </div>
+      <div class="field">
+        <label for="speedScale">Speed</label>
+        <input type="range" id="speedScale" name="speedScale" min="0.2" max="5" step="0.2" value="1.0" />
+        <output id="speedScaleOut">1.0×</output>
+      </div>
+      <div class="field">
+        <label for="radius">Radius</label>
+        <input type="range" id="radius" name="radius" min="1" max="5" step="1" value="2" />
+        <output id="radiusOut">2 px</output>
+      </div>
+      <div class="field">
+        <label for="bg">Background</label>
+        <input type="color" id="bg" name="bg" value="#111111" />
+      </div>
+      <div class="field">
+        <button type="button" id="restartBtn">Restart Both</button>
+      </div>
+    </form>
+  </header>
+
+  <!-- Two canvases side-by-side -->
+  <main class="split">
+    <section class="panel">
+      <h2>JavaScript</h2>
+      <canvas id="jsCanvas" width="640" height="400"></canvas>
+      <div class="metrics" id="jsMetrics">
+        <div><strong>FPS:</strong> <span class="fps-current">–</span> (avg <span class="fps-avg">–</span>, min <span class="fps-min">–</span>, max <span class="fps-max">–</span>)</div>
+        <div><strong>Step time:</strong> <span class="step-avg">–</span> ms avg</div>
+        <div><strong>Heap:</strong> <span class="heap">–</span></div>
+        <div><strong>GC pauses:</strong> <span class="gc">–</span></div>
+        <div><strong>Particles:</strong> <span class="particles">–</span>, <strong>Speed:</strong> <span class="speed">–</span>×</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>WebAssembly (C++)</h2>
+      <canvas id="wasmCanvas" width="640" height="400"></canvas>
+      <div class="metrics" id="wasmMetrics">
+        <div><strong>FPS:</strong> <span class="fps-current">–</span> (avg <span class="fps-avg">–</span>, min <span class="fps-min">–</span>, max <span class="fps-max">–</span>)</div>
+        <div><strong>Step time:</strong> <span class="step-avg">–</span> ms avg</div>
+        <div><strong>WASM memory:</strong> <span class="heap">–</span></div>
+        <div><strong>Particles:</strong> <span class="particles">–</span>, <strong>Speed:</strong> <span class="speed">–</span>×</div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+
