@@ -1,2 +1,2 @@
-cpp/*.js
-cpp/*.wasm
+**/wasm/*.js
+**/wasm/*.wasm
