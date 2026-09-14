@@ -37,6 +37,17 @@ self.onmessage = async (ev) => {
 };
 
 async function bootWasm() {
+	const modulePath = '../wasm/physics.js';
+	const pathPrefix = '../wasm/';
+
+	if (!Module) {
+		const factory = (await import(modulePath)).default;
+		Module = await factory({
+			locateFile: (filename) => pathPrefix + filename
+		});
+	}
+
+	/*
 	// physics.js is the Emscripten output (MODULARIZE=1)
 	importScripts('/wasm/physics.js');
 	// physics.js exposes a factory function; the global name depends on your -o target.
@@ -45,6 +56,7 @@ async function bootWasm() {
 	// By default, emcc -s MODULARIZE=1 -o physics.js exports 'Module' factory.
 	// eslint-disable-next-line no-undef
 	Module = await ModuleFactory(); // see build instructions: we’ll name the factory ModuleFactory
+	*/
 
 	HEAPF32 = Module.HEAPF32;
 }
@@ -78,7 +90,8 @@ function render() {
 	const posX = HEAPF32.subarray(posXPtr >> 2, (posXPtr >> 2) + particles);
 	const posY = HEAPF32.subarray(posYPtr >> 2, (posYPtr >> 2) + particles);
 
-	ctx.fillStyle = '#ffd166'; //change to 4ec9b0 [???]
+	//ctx.fillStyle = '#ffd166';
+	ctx.fillStyle = '#4ec9b0';
 	for (let i = 0; i < particles; i++) {
 		ctx.fillRect(posX[i] - r, posY[i] - r, r * 2, r * 2);
 	}

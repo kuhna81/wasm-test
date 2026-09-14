@@ -57,7 +57,7 @@ function startWorkers(restart = false) {
 	}, [wasmOff]);
 
 	jsWorker.onmessage = (e) => handleMetrics(e.data, jsMetrics, 'JS');
-	wasmWorker.onmessage = (e) => handleMetrics(e.data, wasMetrics, 'WASM');
+	wasmWorker.onmessage = (e) => handleMetrics(e.data, wasmMetrics, 'WASM');
 
 	broadcastSettings();
 }
