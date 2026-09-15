@@ -27,7 +27,7 @@ self.onmessage = async (ev) => {
 		await initParticles();
 		loop();
 	} else if (msg.type === 'settings') {
-		const restartNeeded = (particles !== msg.particles);
+		const restartNeeded = particles !== msg.particles || speed !== msg.speed;
 		particles = msg.particles;
 		speed = msg.speed;
 		radius = msg.radius;
@@ -125,7 +125,7 @@ function loop() {
 			avg: average(stepSamples),
 		},
 		memory: {
-			wasm: memStr,
+			heap: memStr,
 		},
 		config: {
 			particles,

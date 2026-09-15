@@ -22,7 +22,7 @@
 					<output id='speedScaleOut'>1.0x</output>
 				</div>
 				<div class='field'>
-					<button type='button' id='resetBtn'>Reset</button>
+					<button type='button' id='resetBtn' style='display:none;'>Reset</button>
 				</div>
 			</form>
 		</header>
@@ -32,12 +32,41 @@
 				<h2>JavaScript</h2>
 				<canvas id='jsCanvas' width='640' height='400'></canvas>
 				<div class='metrics' id='jsMetrics'>
+					<div>
+						<strong>Step Time:</strong> <span class='step-avg'>-</span> ms avg
+					</div>
+					<div>
+						<strong>Heap:</strong> <span class='heap'>-</span>
+					</div>
+					<div>
+						<strong>GC Pauses:</strong> <span class='gc'>-</span>
+					</div>
+					<div>
+						<strong>Particles:</strong> <span class='particles'>-</span>
+						, <strong>Speed:</strong> <span class='speed'>-</span>x
+					</div>
 				</div>
 			</section>
 			<section class='panel'>
 				<h2>WASM (C++)</h2>
 				<canvas id='wasmCanvas' width='640' height='400'></canvas>
 				<div class='metrics' id='wasmMetrics'>
+					<div>
+						<strong>FPS:</strong> <span class='fps-current'>-</span>
+						(avg <span class='fps-avg'>-</span>
+						, min <span class='fps-min'>-</span>
+						, max <span class='fps-max'>-</span>)
+					</div>
+					<div>
+						<strong>Step Time:</strong> <span class='step-avg'>-</span> ms avg
+					</div>
+					<div>
+						<strong>WASM Memory:</strong> <span class='heap'>-</span>
+					</div>
+					<div>
+						<strong>Particles:</strong> <span class='particles'>-</span>
+						, <strong>Speed:</strong> <span class='speed'>-</span>x
+					</div>
 				</div>
 			</section>
 		</main>

@@ -74,7 +74,24 @@ function broadcastSettings() {
 }
 
 function handleMetrics(data, panel, tag) {
-	// complete [!!!]
+	if (data?.type === 'metrics') {
+		panel.querySelector('.step-avg').textContent = data.step.avg.toFixed(2);
+		panel.querySelector('.heap').textContent = data.memory.heap;
+		panel.querySelector('.particles').textContent = data.config.particles.toLocaleString();
+		panel.querySelector('.speed').textContent = data.config.speed.toFixed(1);
+
+		if (tag === 'JS') {
+			panel.querySelector('.gc').textContent = data.memory.gcPauses ?? '0';
+		} else {
+			panel.querySelector('.fps-current').textContent = data.fps.current.toFixed(1);
+			panel.querySelector('.fps-avg').textContent = data.fps.avg.toFixed(1);
+			panel.querySelector('.fps-min').textContent = data.fps.min.toFixed(1);
+			panel.querySelector('.fps-max').textContent = data.fps.max.toFixed(1);
+			panel.querySelector('.heap').textContent = data.memory.wasm;
+		}
+	} else if (data?.type === 'log') {
+		console.log(`[${tag}]`, data.message);
+	}
 }
 
 startWorkers(false);
