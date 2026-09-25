@@ -1,24 +1,3 @@
-<!--
-	<head>
-		<script>
-			Module.onRuntimeInitialized = function () {
-				const computeSqrt = Module.cwrap ('compute_sqrt', 'number', ['number']);
-				window.callSqrt = function () {
-					const val = parseFloat(document.getElementById('input').value);
-					const result = computeSqrt(val);
-					document.getElementById('result').textContent = 'Result: ' + result;
-				}
-			}
-		</script>
-	</head>
-	<body>
-		<h1>Compute sqrt using WASM</h1>
-		<input id='input' type='number' value='9' />
-		<button onclick='callSqrt()'>Compute</button>
-		<p id='result'></p>
-	</body>
-</html>
--->
 <!DOCTYPE html>
 <html lang='en'>
 	<head>
@@ -27,10 +6,9 @@
 
 		<title>WASM Demo - Primes</title>
 
+		<script src='wasm/primes.js'></script>
 		<script defer>
-			Module.onRuntimeInitialized = () => {
-				console.log('WASM ready.');
-			}
+
 
 			const isPrime = num => {
 				for(let i = 2; i < num; i++) {
@@ -47,21 +25,21 @@
 				return count;
 			}
 
-			const checkToNum = 100;
-/*
-			Module['onRuntimeInitialized'] = () => {
+			const checkToNum = 100000;
+
+			Module.onRuntimeInitialized = () => {
+				let cStart = performance.now();
+				let cPrimes = _checkPrimes(checkToNum);
+				let cTime = performance.now() - cStart;
+
 				let jsStart = performance.now();
 				let jsPrimes = checkPrimes(checkToNum);
-				console.log('JS', jsPrimes, Math.round(performance.now() - jsStart/1000));
+				let jsTime = performance.now() - jsStart;
 
-				
-				let cStart = performance.now();
-				let cPrimes = checkPrimes(checkToNum);
-				console.log('WASM (C)', cPrimes, Math.round(performance.now() - cStart/1000));
+				console.log('WASM (C)', cPrimes, Math.round(cTime));
+				console.log('JS', jsPrimes, Math.round(jsTime));
 			}
-*/
 		</script>
-		<script src='wasm/primes.js' defer></script>
 	</head>
 	<body>
 		<h1>Prime Number Performance</h1>
